@@ -30,3 +30,6 @@ smex-items
 
 # network-security.data
 network-security.data
+
+# elpa archives
+elpa/archives/
