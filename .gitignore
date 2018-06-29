@@ -15,3 +15,15 @@ init.elc
 
 # straight
 straight/
+
+# elpy __pycache__
+elpa/elpy-20180613.1353/elpy/__pycache__
+
+# .python-environments
+.python-environments
+
+# ido.last
+ido.last
+
+# smex-items
+smex-items
