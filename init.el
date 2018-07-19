@@ -79,7 +79,7 @@
 (add-hook 'python-mode-hook 'smartparens-mode)
 
 ;;key変更(mozc)
-(global-set-key (kbd "C-<henkan>") 'toggle-input-method)
+(global-set-key (kbd "C-j") 'toggle-input-method)
 
 ;;
 ;;Yatex
@@ -447,3 +447,6 @@
 (define-key yas-minor-mode-map (kbd "C-x i v") 'yas-visit-snippet-file)
 
 (yas-global-mode 1)
+
+;;; インデントをtabから半角スペースに変更
+(setq-default indent-tabs-mode nil)
