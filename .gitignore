@@ -1,35 +1,5 @@
-# バックアップファイルの除去
-*~
+*
 
-# ac-comphist.dat の除去
-ac-comphist.dat
-
-# tramp の除去
-tramp
-
-# urlの の除去
-url/
-
-# init.elc の除去
-init.elc
-
-# straight
-straight/
-
-# elpy __pycache__
-elpa/elpy-20180613.1353/elpy/__pycache__
-
-# .python-environments
-.python-environments
-
-# ido.last
-ido.last
-
-# smex-items
-smex-items
-
-# network-security.data
-network-security.data
-
-# elpa archives
-elpa/archives/
+! init.el
+! LICENSE
+! README.md
