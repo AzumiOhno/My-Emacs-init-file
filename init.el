@@ -1,158 +1,108 @@
-;;
-;; packages
-;;
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-initialize)
 
-;; auto-settings
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["black" "red3" "ForestGreen" "yellow3" "blue" "magenta3" "DeepSkyBlue" "gray50"])
- '(custom-enabled-themes (quote (madhat2r)))
- '(custom-safe-themes
-   (quote
-    ("0b7ee9bac81558c11000b65100f29b09488ff9182c083fb303c7f13fd0ec8d2b" default)))
- '(fci-rule-color "#151515")
- '(package-selected-packages
-   (quote
-    (elpy treemacs-projectile treemacs-evil treemacs ido-vertical-mode ido-completing-read+ smex ido-ubiquitous jazz-theme madhat2r-theme green-screen-theme helm-themes which-key yasnippet multiple-cursors expand-region dired-toggle dired-toggle-sudo paredit use-package undo-tree auto-complete markdown-preview-mode latex-math-preview ein rainbow-delimiters smartparens magit exec-path-from-shell markdown-mode matlab-mode pdf-tools auto-virtualenvwrapper virtualenvwrapper w3m mew yatex jedi multi-term)))
- '(safe-local-variable-values (quote ((tex-main-file . "report_19"))))
- '(send-mail-function (quote smtpmail-send-it))
- '(term-default-bg-color "#000000")
- '(term-default-fg-color "#dddd00"))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; straight.el 
+(let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
+      (bootstrap-version 3))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
+;; use-packageをインストールする
+(straight-use-package 'use-package)
 
-;; use-package
-(require 'use-package)
+;; オプションなしで自動的にuse-packageをstraight.elにフォールバックする
+;; 本来は (use-package hoge :straight t) のように書く必要がある
+(setq straight-use-package-by-default t)
+
+;;; custom-theme
+(use-package madhat2r-theme
+  :init (load-theme 'madhat2r t))
 
 ;;
 ;; ssh
 ;;
-(require 'tramp)
+(use-package tramp)
 (setq tramp-default-method "ssh")
 
 
 ;;
 ;;mozc
 ;;
-(require 'mozc)
+(use-package mozc)
 (set-language-environment "Japanese")
 (setq default-input-method "japanese-mozc")
 (prefer-coding-system 'utf-8)
+(set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
+;;key変更(mozc)
+(global-set-key (kbd "C-j") 'toggle-input-method)
 
 ;;
 ;; windmove
+;; 
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 (global-set-key (kbd "C-c <left>") 'windmove-left)
 (global-set-key (kbd "C-c <down>") 'windmove-down)
 (global-set-key (kbd "C-c <up>") 'windmove-up)
 (global-set-key (kbd "C-c <right>") 'windmove-right)
-;;
-;;jedi
-;;
-(require 'epc)
-(require 'auto-complete-config)
-(require 'python)
 
-;;;;PYTHONPATH上のソースコードがauto-completeの補完対象になる;;;;;
-(setenv "PYTHONPATH" "/usr/local/lib/python2.7/site-packages")
-(require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
 
 ;;python modeのときはsmartparens起動
 (add-hook 'python-mode-hook 'smartparens-mode)
 
-;;key変更(mozc)
-(global-set-key (kbd "C-j") 'toggle-input-method)
-
 ;;
 ;;Yatex
 ;;
-
-;;yatex-modeの起動
-(setq auto-mode-alist 
-      (cons (cons "\\.tex$" 'yatex-mode) auto-mode-alist))
-(autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
-;; 野鳥が置いてある directry の load-path 設定
-;; default で load-path が通っている場合は必要ありません
-
-;(setq load-path
-;      (cons (expand-file-name
-;             "~/.emacs.d/elpa/yatex-20171030.502") load-path))
-
-(add-to-list 'load-path "~/.emacs.d/elpa/yatex-20171030.502")
-;; 文章作成時の日本語文字コード
-;; 0: no-converion
-;; 1: Shift JIS (windows & dos default)
-;; 2: ISO-2022-JP (other default)
-;; 3: EUC
-;; 4: UTF-8
-(setq YaTeX-kanji-code 4)
-
-(setq tex-command "platex")
-
-(setq bibtex-command "pbibtex")
-(defvar YaTeX-dvi2-command-ext-alist
-  '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
-   ("ghostview\\|gv" . ".ps")
-   ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
-(setq dviprint-command-format "dvipdfmx -f ptex-ipaex.map %s")
-;;reftex-mode
-(add-hook 'yatex-mode-hook
+(use-package yatex
+  :mode
+  ("\\.tex$" . yatex-mode)
+  :init
+  (add-hook 'yatex-mode-hook
           #'(lambda ()
               (reftex-mode 1)
               (define-key reftex-mode-map
                 (concat YaTeX-prefix ">") 'YaTeX-comment-region)
               (define-key reftex-mode-map
                 (concat YaTeX-prefix "<") 'YaTeX-uncomment-region)))
-(setq reftex-default-bibliography '("/home/azumi/lab/progress_report/reference.bib"))
+  :config
+  (progn (setq YaTex-kanji-code 4)
+         (setq tex-command "platex")
+         (setq bibtex-command "pbibtex")
+         (defvar YaTeX-dvi2-command-ext-alist
+           '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
+             ("ghostview\\|gv" . ".ps")
+             ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
+         (setq dviprint-command-format "dvipdfmx -f ptex-ipaex.map %s")
+         (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib"))))
+;; 文章作成時の日本語文字コード
+;; 0: no-converion
+;; 1: Shift JIS (windows & dos default)
+;; 2: ISO-2022-JP (other default)
+;; 3: EUC
+;; 4: UTF-8
+;; (setq YaTeX-kanji-code 4)
 
-;;mail
-;;(setq user-mail-address "ee47067@meiji.ac.jp")
-;;(setq user-full-name "Azumi Ohno")
-;;(setq smtpmail-smtp-server "smtp.office365.com")
-;;(setq mail-user-agent 'message-user-agent)
-;;(setq message-send-mail-function 'message-smtpmail-send-it)
+;; (setq tex-command "platex")
 
-;; Mew
-(autoload 'mew "mew" nil t)
-(autoload 'mew-send "mew" nil t)
-
-;; Optional setup (Read Mail menu):
-(setq read-mail-command 'mew)
-
-;; Optional setup (e.g. C-xm for sending a message):
-(autoload 'mew-user-agent-compose "mew" nil t)
-(if (boundp 'mail-user-agent)
-    (setq mail-user-agent 'mew-user-agent))
-(if (fboundp 'define-mail-user-agent)
-    (define-mail-user-agent
-      'mew-user-agent
-      'mew-user-agent-compose
-      'mew-draft-send-message
-      'mew-draft-kill
-      'mew-send-hook))
-
-(autoload 'mew "mew" nil t)
-(autoload 'mew-send "mew" nil t)
-(setq mew-fcc "+outbox") ; 送信メールを保存
-(setq exec-path (cons "/usr/bin" exec-path))
+;; (setq bibtex-command "pbibtex")
+;; (defvar YaTeX-dvi2-command-ext-alist
+;;   '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
+;;    ("ghostview\\|gv" . ".ps")
+;;    ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
+;; (setq dviprint-command-format "dvipdfmx -f ptex-ipaex.map %s")
+;; ;;reftex-mode
+;; (add-hook 'yatex-mode-hook
+;;           #'(lambda ()
+;;               (reftex-mode 1)
+;;               (define-key reftex-mode-map
+;;                 (concat YaTeX-prefix ">") 'YaTeX-comment-region)
+;;               (define-key reftex-mode-map
+;;                 (concat YaTeX-prefix "<") 'YaTeX-uncomment-region)))
+;; (setq reftex-default-bibliography '("/home/azumi/lab/progress_report/reference.bib"))
 
 ;; eww
 (setq eww-search-prefix "http://www.google.co.jp/search?q=")
@@ -195,7 +145,7 @@
               (count-lines (region-beginning) (region-end))
               (- (region-end) (region-beginning)))
     ""))
-(add-to-list 'default-mode-line-format
+(add-to-list 'mode-line-format
              '(:eval (count-lines-and-chars)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -205,28 +155,27 @@
 (defalias 'ps-mule-header-string-charsets 'ignore)
 
 
-;; (require 'pdf-preview)
+;; (use-package pdf-preview)
 ;; (setq pdf-preview-preview-command "evince")
 ;;multi-term
-(add-to-list 'load-path "~/.emacs.d/elpa")
-(require 'multi-term)
+(use-package multi-term)
 
-;pdf-toolsに関する設定
-(require 'pdf-tools)
-(require 'pdf-annot) 
-(require 'pdf-history) 
-(require 'pdf-info) 
-(require 'pdf-isearch) 
-(require 'pdf-links) 
-(require 'pdf-misc) 
-(require 'pdf-occur) 
-(require 'pdf-outline) 
-(require 'pdf-sync) 
-(require 'tablist-filter)
-(require 'tablist)
-(add-to-list 'auto-mode-alist (cons "\\.pdf$" 'pdf-view-mode))
+;; ;pdf-toolsに関する設定
+;; (use-package pdf-tools)
+;; (use-package pdf-annot) 
+;; (use-package pdf-history) 
+;; (use-package pdf-info) 
+;; (use-package pdf-isearch) 
+;; (use-package pdf-links) 
+;; (use-package pdf-misc) 
+;; (use-package pdf-occur) 
+;; (use-package pdf-outline) 
+;; (use-package pdf-sync) 
+;; (use-package tablist-filter)
+;; (use-package tablist)
+;; (add-to-list auto-mode-alist (cons "\\.pdf$" 'pdf-view-mode))
 
-(require 'linum)
+(use-package linum)
 (global-linum-mode)
 (defcustom linum-disabled-modes-list '(doc-view-mode pdf-view-mode)
   "* List of modes disabled when global linum mode is on"
@@ -256,34 +205,8 @@
 ;; magit
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;;for csv2latextable
-;; for csv2latextable
-(defun csv2latextable ()
-  (interactive)
-  (insert
-   (shell-command-to-string
-    (concat "python /home/azumi/tools/csv2latextable/csv2latextable.py "
-	    "\""
-	    (read-file-name "input csv file: ")
-	    "\" "
-	    (if (y-or-n-p "No header mode? : ")
-		"--noheader" nil)))))
-
-
-;; ein: emacs IPython notebook
-(require 'ein)
-
-;; ein: latex preview
-(add-to-list 'load-path "~/.emacs.d/elpa/ein-preview-latex")
-;; (require 'ein-preview-latex)
-
-
 ;; markdown preview
 (setq markdown-command "pandoc")
-
-;; capslock → ctrl
-(global-set-key (kbd "<eisu-toggle>") 'control)
-
 
 ;; paredit settings
 (use-package paredit
@@ -292,6 +215,7 @@
 	 (lisp-mode . enable-paredit-mode)
 	 (ielm-mode . enable-paredit-mode)))
 (show-paren-mode 1)
+
 ;;; undo-tree
 (use-package undo-tree
   :init
@@ -299,22 +223,24 @@
   :bind
   ("M-/" . undo-tree-redo))
 
-;;; multiple-cursors
-(use-package multiple-curosors
+
+
+;; multiple-cursors
+(use-package multiple-cursors
   :bind
   (("C-S-c C-S-c" . mc/edit-lines)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-next-previous-like-this)
    ("C-c C->" . mc/mark-all-like-this)))
 
-;;; around dired
-(use-package wdired
-  :hook (dired-load . wdired)
-  :bind (:map dired-mode-map
-	      ("r" . wdired-change-to-wdired-mode))
-  :config (setq dired-dwin-target t))
+;;; wdired
+(use-package wdired)
+(add-hook 'dired-load-hook 'wdired)
+(define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
+(setq dired-dwin-target t)
 
 ;;; expand-region
+
 (use-package expand-region
   :bind
   (("C-@" . er/expand-region) 
@@ -337,6 +263,7 @@
 (global-set-key (kbd "C-c C-r") 'eval-and-replace)
 
 ;;; which-key config
+(use-package which-key)
 (which-key-setup-side-window-bottom)
 (which-key-mode 1)
 
@@ -346,7 +273,7 @@
 (ido-everywhere 1)
 (setq ido-enable-flex-matching t)	;あいまい一致
 
-(require 'ido-completing-read+)
+(use-package ido-completing-read+)
 (ido-ubiquitous-mode 1)
 
 (use-package smex
@@ -355,13 +282,12 @@
    ("M-X" . smex-major-mode-commands)))
 
 (setq ido-max-window-height 0.75)	; idoが使うwindowの高さを設定
+(use-package ido-vertical-mode)
 (ido-vertical-mode 1)
 (setq ido-vertical-define-keys 'C-n-and-C-p-only)
 
-
-;;; treemacs settings
+;;; treemacs configuration
 (use-package treemacs
-  :ensure t
   :defer t
   :init
   (with-eval-after-load 'winum
@@ -369,7 +295,10 @@
   :config
   (progn
     (setq treemacs-collapse-dirs              (if (executable-find "python") 3 0)
+          treemacs-deferred-git-apply-delay   0.5
+          treemacs-display-in-side-window     t
           treemacs-file-event-delay           5000
+          treemacs-file-follow-delay          0.2
           treemacs-follow-after-init          t
           treemacs-follow-recenter-distance   0.1
           treemacs-goto-tag-strategy          'refetch-index
@@ -408,22 +337,20 @@
         ("M-0"       . treemacs-select-window)
         ("C-x t 1"   . treemacs-delete-other-windows)
         ("C-x t t"   . treemacs)
-	([f8] . treemacs)
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-evil
-  :after treemacs evil
-  :ensure t)
+  :after treemacs evil)
 
 (use-package treemacs-projectile
-  :after treemacs projectile
-  :ensure t)
-
+  :after treemacs projectile)
 
 ;;; elpy (python-IDE)
-(exec-path-from-shell-initialize)
+(use-package elpy)
+(use-package exec-path-from-shell
+  :init (exec-path-from-shell-initialize))
 
 (elpy-enable)
 (setenv "WORKON_HOME" "/home/azumi/.pyenv/versions/anaconda3-5.0.1")
@@ -433,7 +360,7 @@
 
 ;;; yasnipets
 ;; 自分用・追加用テンプレート -> mysnippetに作成したテンプレートが格納される
-(require 'yasnippet)
+(use-package yasnippet)
 (setq yas-snippet-dirs
       '("~/.emacs.d/mysnippets"
         "~/.emacs.d/yasnippets"
@@ -450,3 +377,11 @@
 
 ;;; インデントをtabから半角スペースに変更
 (setq-default indent-tabs-mode nil)
+
+;;; sudo-edit
+(use-package sudo-edit
+  :bind ("C-c C-r" . sudo-edit))
+
+;;; menu & tool bar are invisible
+(menu-bar-mode 0)
+(tool-bar-mode 0)
