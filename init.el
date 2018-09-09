@@ -1,4 +1,3 @@
-
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
@@ -385,3 +384,66 @@
 ;;; menu & tool bar are invisible
 (menu-bar-mode 0)
 (tool-bar-mode 0)
+
+;;; open-junk-file
+(use-package open-junk-file
+  :bind ("C-x C-z" . 'open-junk-file))
+
+;;; lispxmp
+(use-package lispxmp
+  :hook ((emacs-lisp-mode . lispxmp)
+	 (lisp-interaction-mode . lispxmp)
+	 (lisp-mode . lispxmp))
+  :bind (:map emacs-lisp-mode-map
+	      ("C-c C-d" . lispxmp)))
+
+;;; paredit
+(use-package paredit
+  :hook ((emacs-lisp-mode . enable-paredit-mode)
+	 (lisp-interaction-mode . enable-paredit-mode)
+	 (lisp-mode . enable-paredit-mode)
+	 (ielm-mode . enable-paredit-mode)))
+
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+(setq eldoc-idle-delay 0.2)            ; すぐに表示したい
+(setq eldoc-minor-mode-string "")      ; モードラインにEldocと表示しない
+;; 釣り合いの取れる括弧をハイライトする
+(show-paren-mode 1)
+;; 改行と同時にインデントも行う
+(global-set-key "\C-m" 'newline-and-indent)
+;; find-functionをキー割り当てする
+(find-function-setup-keys)
+
+;;; google translate
+(use-package google-translate)
+
+(defvar google-translate-english-chars "[:ascii:]’“”–"
+  "これらの文字が含まれているときは英語とみなす")
+(defun google-translate-enja-or-jaen (&optional string)
+  "regionか、現在のセンテンスを言語自動判別でGoogle翻訳する。"
+  (interactive)
+  (setq string
+        (cond ((stringp string) string)
+              (current-prefix-arg
+               (read-string "Google Translate: "))
+              ((use-region-p)
+               (buffer-substring (region-beginning) (region-end)))
+              (t
+               (save-excursion
+                 (let (s)
+                   (forward-char 1)
+                   (backward-sentence)
+                   (setq s (point))
+                   (forward-sentence)
+                   (buffer-substring s (point)))))))
+  (let* ((asciip (string-match
+                  (format "\\`[%s]+\\'" google-translate-english-chars)
+                  string)))
+    (run-at-time 0.1 nil 'deactivate-mark)
+    (google-translate-translate
+     (if asciip "en" "ja")
+     (if asciip "ja" "en")
+     string)))
+(global-set-key (kbd "C-c t") 'google-translate-enja-or-jaen)
