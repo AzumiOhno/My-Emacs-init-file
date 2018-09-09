@@ -29,15 +29,16 @@
 
 
 ;;
-;;mozc
+;;mozc(linuxのみ)
 ;;
-(use-package mozc)
-(set-language-environment "Japanese")
-(setq default-input-method "japanese-mozc")
-(prefer-coding-system 'utf-8)
-(set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
-;;key変更(mozc)
-(global-set-key (kbd "C-j") 'toggle-input-method)
+(when (eq system-type 'gnu/linux)
+  (use-package mozc)
+  (set-language-environment "Japanese")
+  (setq default-input-method "japanese-mozc")
+  (prefer-coding-system 'utf-8)
+  (set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
+  ;;key変更(mozc)
+  (global-set-key (kbd "C-j") 'toggle-input-method))
 
 ;;
 ;; windmove
