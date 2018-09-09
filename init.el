@@ -27,7 +27,6 @@
 (use-package tramp)
 (setq tramp-default-method "ssh")
 
-
 ;;
 ;;mozc(linuxのみ)
 ;;
@@ -203,7 +202,9 @@
   )
 )
 ;; magit
-(global-set-key (kbd "C-x g") 'magit-status)
+(use-package magit
+  :bind ("C-x g" . magit-status))
+;; (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; markdown preview
 (setq markdown-command "pandoc")
