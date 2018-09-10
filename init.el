@@ -51,7 +51,9 @@
 
 
 ;;python modeのときはsmartparens起動
-(add-hook 'python-mode-hook 'smartparens-mode)
+(use-package smartparens
+  :hook (python-mode . smartparens-mode))
+;; (add-hook 'python-mode-hook 'smartparens-mode)
 
 ;;
 ;;Yatex
@@ -209,22 +211,12 @@
 ;; markdown preview
 (setq markdown-command "pandoc")
 
-;; paredit settings
-(use-package paredit
-  :hook ((emacs-lisp-mode . enable-paredit-mode)
-	 (lisp-interaction-mode . enable-paredit-mode)
-	 (lisp-mode . enable-paredit-mode)
-	 (ielm-mode . enable-paredit-mode)))
-(show-paren-mode 1)
-
 ;;; undo-tree
 (use-package undo-tree
   :init
   (global-undo-tree-mode t)
   :bind
   ("M-/" . undo-tree-redo))
-
-
 
 ;; multiple-cursors
 (use-package multiple-cursors
@@ -364,8 +356,7 @@
 (use-package yasnippet)
 (setq yas-snippet-dirs
       '("~/.emacs.d/mysnippets"
-        "~/.emacs.d/yasnippets"
-        ))
+        "~/.emacs.d/yasnippets"))
 
 ;; 既存スニペットを挿入する
 (define-key yas-minor-mode-map (kbd "C-x i i") 'yas-insert-snippet)
@@ -420,7 +411,6 @@
 
 ;;; google translate
 (use-package google-translate)
-
 (defvar google-translate-english-chars "[:ascii:]’“”–"
   "これらの文字が含まれているときは英語とみなす")
 (defun google-translate-enja-or-jaen (&optional string)
