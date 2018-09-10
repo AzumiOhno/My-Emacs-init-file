@@ -1,4 +1,3 @@
-
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
