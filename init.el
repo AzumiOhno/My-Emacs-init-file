@@ -1,3 +1,4 @@
+
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
@@ -439,3 +440,6 @@
      (if asciip "ja" "en")
      string)))
 (global-set-key (kbd "C-c t") 'google-translate-enja-or-jaen)
+
+;;; speed-type
+(use-package speed-type)
