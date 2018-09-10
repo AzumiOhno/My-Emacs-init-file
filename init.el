@@ -28,17 +28,17 @@
 (use-package tramp)
 (setq tramp-default-method "ssh")
 
-
 ;;
-;;mozc
+;;mozc(linuxのみ)
 ;;
-(use-package mozc)
-(set-language-environment "Japanese")
-(setq default-input-method "japanese-mozc")
-(prefer-coding-system 'utf-8)
-(set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
-;;key変更(mozc)
-(global-set-key (kbd "C-j") 'toggle-input-method)
+(when (eq system-type 'gnu/linux)
+  (use-package mozc)
+  (set-language-environment "Japanese")
+  (setq default-input-method "japanese-mozc")
+  (prefer-coding-system 'utf-8)
+  (set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
+  ;;key変更(mozc)
+  (global-set-key (kbd "C-j") 'toggle-input-method))
 
 ;;
 ;; windmove
@@ -52,7 +52,9 @@
 
 
 ;;python modeのときはsmartparens起動
-(add-hook 'python-mode-hook 'smartparens-mode)
+(use-package smartparens
+  :hook (python-mode . smartparens-mode))
+;; (add-hook 'python-mode-hook 'smartparens-mode)
 
 ;;
 ;;Yatex
@@ -203,18 +205,12 @@
   )
 )
 ;; magit
-(global-set-key (kbd "C-x g") 'magit-status)
+(use-package magit
+  :bind ("C-x g" . magit-status))
+;; (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; markdown preview
 (setq markdown-command "pandoc")
-
-;; paredit settings
-(use-package paredit
-  :hook ((emacs-lisp-mode . enable-paredit-mode)
-	 (lisp-interaction-mode . enable-paredit-mode)
-	 (lisp-mode . enable-paredit-mode)
-	 (ielm-mode . enable-paredit-mode)))
-(show-paren-mode 1)
 
 ;;; undo-tree
 (use-package undo-tree
@@ -222,8 +218,6 @@
   (global-undo-tree-mode t)
   :bind
   ("M-/" . undo-tree-redo))
-
-
 
 ;; multiple-cursors
 (use-package multiple-cursors
@@ -363,8 +357,7 @@
 (use-package yasnippet)
 (setq yas-snippet-dirs
       '("~/.emacs.d/mysnippets"
-        "~/.emacs.d/yasnippets"
-        ))
+        "~/.emacs.d/yasnippets"))
 
 ;; 既存スニペットを挿入する
 (define-key yas-minor-mode-map (kbd "C-x i i") 'yas-insert-snippet)
@@ -385,3 +378,68 @@
 ;;; menu & tool bar are invisible
 (menu-bar-mode 0)
 (tool-bar-mode 0)
+
+;;; open-junk-file
+(use-package open-junk-file
+  :bind ("C-x C-z" . 'open-junk-file))
+
+;;; lispxmp
+(use-package lispxmp
+  :hook ((emacs-lisp-mode . lispxmp)
+	 (lisp-interaction-mode . lispxmp)
+	 (lisp-mode . lispxmp))
+  :bind (:map emacs-lisp-mode-map
+	      ("C-c C-d" . lispxmp)))
+
+;;; paredit
+(use-package paredit
+  :hook ((emacs-lisp-mode . enable-paredit-mode)
+	 (lisp-interaction-mode . enable-paredit-mode)
+	 (lisp-mode . enable-paredit-mode)
+	 (ielm-mode . enable-paredit-mode)))
+
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+(setq eldoc-idle-delay 0.2)            ; すぐに表示したい
+(setq eldoc-minor-mode-string "")      ; モードラインにEldocと表示しない
+;; 釣り合いの取れる括弧をハイライトする
+(show-paren-mode 1)
+;; 改行と同時にインデントも行う
+(global-set-key "\C-m" 'newline-and-indent)
+;; find-functionをキー割り当てする
+(find-function-setup-keys)
+
+;;; google translate
+(use-package google-translate)
+(defvar google-translate-english-chars "[:ascii:]’“”–"
+  "これらの文字が含まれているときは英語とみなす")
+(defun google-translate-enja-or-jaen (&optional string)
+  "regionか、現在のセンテンスを言語自動判別でGoogle翻訳する。"
+  (interactive)
+  (setq string
+        (cond ((stringp string) string)
+              (current-prefix-arg
+               (read-string "Google Translate: "))
+              ((use-region-p)
+               (buffer-substring (region-beginning) (region-end)))
+              (t
+               (save-excursion
+                 (let (s)
+                   (forward-char 1)
+                   (backward-sentence)
+                   (setq s (point))
+                   (forward-sentence)
+                   (buffer-substring s (point)))))))
+  (let* ((asciip (string-match
+                  (format "\\`[%s]+\\'" google-translate-english-chars)
+                  string)))
+    (run-at-time 0.1 nil 'deactivate-mark)
+    (google-translate-translate
+     (if asciip "en" "ja")
+     (if asciip "ja" "en")
+     string)))
+(global-set-key (kbd "C-c t") 'google-translate-enja-or-jaen)
+
+;;; speed-type
+(use-package speed-type)
