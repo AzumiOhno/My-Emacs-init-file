@@ -230,7 +230,7 @@
 (use-package wdired)
 (add-hook 'dired-load-hook 'wdired)
 (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
-(setq dired-dwin-target t)
+(setq dired-dwim-target t)
 
 ;;; expand-region
 
