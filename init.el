@@ -442,3 +442,14 @@
 
 ;;; speed-type
 (use-package speed-type)
+
+;;; bs-show
+(global-set-key (kbd "C-x C-b") 'bs-show)
+
+;;; browse-kill-ring kill-ringの一覧を表示
+(use-package browse-kill-ring
+  :bind ("M-y" . browse-kill-ring))
+
+;;; smooth-scroll
+(use-package smooth-scroll
+  :config (smooth-scroll-mode t))
