@@ -1,6 +1,12 @@
 *
-! */
-! init.el
-! LICENSE
-! README.md
-! straight/versions/
+
+!*/
+
+!/init.el
+!/LICENSE
+!/README.md
+
+# straight
+straight/repos/
+straight/build/
+!straight/versions/*
