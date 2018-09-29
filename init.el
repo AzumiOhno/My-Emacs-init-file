@@ -70,7 +70,7 @@
               (define-key reftex-mode-map
                 (concat YaTeX-prefix "<") 'YaTeX-uncomment-region)))
   :config
-  (progn (setq YaTex-kanji-code 4)
+  (progn (setq YaTeX-kanji-code 0)
          (setq tex-command "platex")
          (setq bibtex-command "pbibtex")
          (defvar YaTeX-dvi2-command-ext-alist
@@ -85,7 +85,7 @@
 ;; 2: ISO-2022-JP (other default)
 ;; 3: EUC
 ;; 4: UTF-8
-;; (setq YaTeX-kanji-code 4)
+;; (setq YaTeX-kanji-code 0)
 
 ;; (setq tex-command "platex")
 
