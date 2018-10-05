@@ -39,6 +39,20 @@
   ;;key変更(mozc)
   (global-set-key (kbd "C-j") 'toggle-input-method))
 
+(defun advice:mozc-key-event-with-ctrl-key--with-ctrl (r)
+  (cond ((and (not (null (cdr r))) (eq (cadr r) 'control) (null (cddr r)))
+         (case (car r)
+           (102 r) ; C-f
+           (98 r) ; C-b
+           (110 '(down)) ; C-n
+           (112 '(up))  ; C-p
+           (t r)
+           ))
+        (t r)))
+
+(advice-add 'mozc-key-event-to-key-and-modifiers :filter-return 'advice:mozc-key-event-with-ctrl-key--with-ctrl)
+;; (advice-remove 'mozc-key-event-to-key-and-modifiers 'mozc-key-event-with-ctrl-key)
+
 ;;
 ;; windmove
 ;; 
@@ -453,3 +467,10 @@
 ;;; smooth-scroll
 (use-package smooth-scroll
   :config (smooth-scroll-mode t))
+
+;;; 日付挿入
+(defun insert-current-time ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d(%a) %H:%M:%S" (current-time))))
+(bind-key "C-c d" 'insert-current-time)
+
