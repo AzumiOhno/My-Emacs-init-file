@@ -88,11 +88,6 @@
   (progn (setq YaTex-kanji-code nil)
          (setq tex-command "platex")
          (setq bibtex-command "pbibtex")
-         (defvar YaTeX-dvi2-command-ext-alist
-           '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
-             ("ghostview\\|gv" . ".ps")
-             ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
-         ;; (setq dviprint-command-format "dvipdfmx -f ipaex.map %s")
          (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib"))))
 ;; 文章作成時の日本語文字コード
 ;; 0: no-converion
