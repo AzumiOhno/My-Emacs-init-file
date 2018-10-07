@@ -1,3 +1,4 @@
+
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
@@ -39,6 +40,20 @@
   ;;key変更(mozc)
   (global-set-key (kbd "C-j") 'toggle-input-method))
 
+(defun advice:mozc-key-event-with-ctrl-key--with-ctrl (r)
+  (cond ((and (not (null (cdr r))) (eq (cadr r) 'control) (null (cddr r)))
+         (case (car r)
+           (102 r) ; C-f
+           (98 r) ; C-b
+           (110 '(down)) ; C-n
+           (112 '(up))  ; C-p
+           (t r)
+           ))
+        (t r)))
+
+(advice-add 'mozc-key-event-to-key-and-modifiers :filter-return 'advice:mozc-key-event-with-ctrl-key--with-ctrl)
+;; (advice-remove 'mozc-key-event-to-key-and-modifiers 'mozc-key-event-with-ctrl-key)
+
 ;;
 ;; windmove
 ;; 
@@ -70,14 +85,9 @@
               (define-key reftex-mode-map
                 (concat YaTeX-prefix "<") 'YaTeX-uncomment-region)))
   :config
-  (progn (setq YaTeX-kanji-code 0)
+  (progn (setq YaTex-kanji-code nil)
          (setq tex-command "platex")
          (setq bibtex-command "pbibtex")
-         (defvar YaTeX-dvi2-command-ext-alist
-           '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
-             ("ghostview\\|gv" . ".ps")
-             ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
-         (setq dviprint-command-format "dvipdfmx -f ptex-ipaex.map %s")
          (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib"))))
 ;; 文章作成時の日本語文字コード
 ;; 0: no-converion
@@ -453,3 +463,10 @@
 ;;; smooth-scroll
 (use-package smooth-scroll
   :config (smooth-scroll-mode t))
+
+;;; 日付挿入
+(defun insert-current-time ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d(%a) %H:%M:%S" (current-time))))
+(bind-key "C-c d" 'insert-current-time)
+
