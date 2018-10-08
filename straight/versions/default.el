@@ -28,6 +28,7 @@
  ("lispxmp" . "7ad077b4ee91ce8a42f84eeddb9fc7ea4eac7814")
  ("magit" . "0e818e9dfd053eed6da8a40bbf6a65f2fa4b2ed8")
  ("magit-popup" . "6e07f745a18af514c2885eeabe9b2b2a5216e53c")
+ ("markdown-mode" . "74c0a0680806fc2e9f5ebd93dd117767ebc2fd2e")
  ("melpa" . "6ee64e846c471926194fcecc4824a06effc0aa5b")
  ("multi-term" . "f954e4e18b0a035151d34852387e724d87a3316f")
  ("multiple-cursors.el" . "9c49874fa444a4e7255ec05f62c01daed31c7b09")
