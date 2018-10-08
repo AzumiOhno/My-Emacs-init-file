@@ -226,8 +226,9 @@
   :bind ("C-x g" . magit-status))
 ;; (global-set-key (kbd "C-x g") 'magit-status)
 
-;; markdown preview
-(setq markdown-command "pandoc")
+;; markdown
+(use-package markdown-mode
+  :config (setq markdown-command "pandoc"))
 
 ;;; undo-tree
 (use-package undo-tree
