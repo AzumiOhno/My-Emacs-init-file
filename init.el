@@ -96,7 +96,10 @@
   (progn (setq YaTex-kanji-code nil)
          (setq tex-command "platex")
          (setq bibtex-command "pbibtex")
-         (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib"))))
+         (when (eq system-type 'gnu/linux)
+           (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib")))
+         (when (eq system-type 'darwin)
+           (setq reftex-defaultbibliography '("/Users/Azumi/Documents/Documents_macbook/university/lab/research/progress_report/reference.bib")))))
 ;; 文章作成時の日本語文字コード
 ;; 0: no-converion
 ;; 1: Shift JIS (windows & dos default)
