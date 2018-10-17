@@ -1,4 +1,3 @@
-
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
@@ -40,21 +39,25 @@
 ;;mozc(linuxのみ)
 ;;
 (when (eq system-type 'gnu/linux)
-  (use-package mozc)
-  (set-language-environment "Japanese")
-  (setq default-input-method "japanese-mozc")
-  (prefer-coding-system 'utf-8)
-  (set-fontset-font t 'japanese-jisx0208 "IPAPGothic")
-  ;;key変更(mozc)
-  (global-set-key (kbd "C-j") 'toggle-input-method))
+  (use-package mozc
+    :init (progn
+            (set-language-environment "Japanese")
+            (setq default-input-method "japanese-mozc")
+            (prefer-coding-system 'utf-8)
+            (set-fontset-font t 'japanese-jisx0208 "IPAPGothic"))
+    ;;key変更(mozc)
+    :bind (("C-j" . toggle-input-method))))
+;; org-modeでの衝突を避ける
+(eval-after-load "org"
+  '(define-key org-mode-map (kbd "C-j") nil))
 
 (defun advice:mozc-key-event-with-ctrl-key--with-ctrl (r)
   (cond ((and (not (null (cdr r))) (eq (cadr r) 'control) (null (cddr r)))
          (case (car r)
-           (102 r) ; C-f
-           (98 r) ; C-b
-           (110 '(down)) ; C-n
-           (112 '(up))  ; C-p
+           (102 r)                      ; C-f
+           (98 r)                       ; C-b
+           (110 '(down))                ; C-n
+           (112 '(up))                  ; C-p
            (t r)
            ))
         (t r)))
