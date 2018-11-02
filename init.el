@@ -1,3 +1,4 @@
+
 ;; straight.el 
 (let ((bootstrap-file (concat user-emacs-directory "straight/repos/straight.el/bootstrap.el"))
       (bootstrap-version 3))
@@ -375,6 +376,11 @@
 (add-to-list 'exec-path "~/.pyenv/shims")
 (setq elpy-rpc-backend "jedi")
 (add-to-list 'load-path "~/.pyenv/versions/bin/")
+(setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt"
+      python-shell-prompt-detect-failure-warning nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters
+             "jupyter")
 
 ;;; yasnipets
 ;; 自分用・追加用テンプレート -> mysnippetに作成したテンプレートが格納される
@@ -391,6 +397,7 @@
 (define-key yas-minor-mode-map (kbd "C-x i v") 'yas-visit-snippet-file)
 
 (yas-global-mode 1)
+
 
 ;;; インデントをtabから半角スペースに変更
 (setq-default indent-tabs-mode nil)
@@ -493,6 +500,7 @@
           (add-to-list 'ac-modes 'fundamental-mode)  ;; fundamental-mode
           (add-to-list 'ac-modes 'org-mode)
           (add-to-list 'ac-modes 'yatex-mode)
+          (setq ac-modes (delete 'python-mode ac-modes))
           (ac-set-trigger-key "TAB")
           (setq ac-use-menu-map t) ;; 補完メニュー表示時にC-n/C-pで補完候補選択
           (setq ac-use-fuzzy t)))
