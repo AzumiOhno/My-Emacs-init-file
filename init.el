@@ -18,6 +18,7 @@
 ;; 本来は (use-package hoge :straight t) のように書く必要がある
 (setq straight-use-package-by-default t)
 
+
 ;;; custom-theme
 ;; (use-package madhat2r-theme
 ;;   :init (load-theme 'madhat2r t))
@@ -367,20 +368,38 @@
   :after treemacs projectile)
 
 ;;; elpy (python-IDE)
-(use-package elpy)
+(use-package elpy
+  :init (progn
+          (elpy-enable))
+  :config (progn
+            (setq elpy-rpc-backend "jedi")
+            (setq python-shell-interpreter "jupyter"
+                  python-shell-interpreter-args "console --simple-prompt"
+                  python-shell-prompt-detect-failure-warning nil)
+            (add-to-list 'python-shell-completion-native-disabled-interpreters
+                         "jupyter"))
+  :bind (:map company-active-map
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("C-d" . company-show-doc-buffer)
+              ("<tab>" . company-complete)))
+
 (use-package exec-path-from-shell
   :init (exec-path-from-shell-initialize))
 
-(elpy-enable)
-(setenv "WORKON_HOME" "/home/azumi/.pyenv/versions/anaconda3-5.0.1")
-(add-to-list 'exec-path "~/.pyenv/shims")
-(setq elpy-rpc-backend "jedi")
-(add-to-list 'load-path "~/.pyenv/versions/bin/")
-(setq python-shell-interpreter "jupyter"
-      python-shell-interpreter-args "console --simple-prompt"
-      python-shell-prompt-detect-failure-warning nil)
-(add-to-list 'python-shell-completion-native-disabled-interpreters
-             "jupyter")
+;; (add-to-list 'exec-path "~/.pyenv/shims")
+;; (add-to-list 'load-path "~/.pyenv/versions/bin/")
+
+(use-package auto-virtualenv
+  :hook ((python-mode . auto-virtualenv-set-virtualenv)
+         ;; Activate on changing buffers
+         (window-configuration-change . auto-virtualenv-set-virtualenv)
+         ;; Activate on focus in
+         (focus-in . auto-virtualenv-set-virtualenv)))
+;; (bind-key :map company-active-map
+;;           ("C-n" . company-select-next)
+;;           ("C-p" . company-select-previous)
+;;           ("C-d" . company-show-doc-buffer))
 
 ;;; yasnipets
 ;; 自分用・追加用テンプレート -> mysnippetに作成したテンプレートが格納される
