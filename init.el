@@ -20,8 +20,6 @@
 
 
 ;;; custom-theme
-;; (use-package madhat2r-theme
-;;   :init (load-theme 'madhat2r t))
 (use-package doom-themes
   :config (progn
             (setq doom-themes-enable-bold t
