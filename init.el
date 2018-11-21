@@ -526,9 +526,10 @@
     ""))
 
 ;;; for Emacs26.1
-(setq-default mode-line-format
-              (cons '(:eval (count-lines-and-chars))
-                    (default-value 'mode-line-format)))
+(if (not (member '(:eval (count-lines-and-chars)) (default-value 'mode-line-format)))
+    (setq-default mode-line-format
+               (cons '(:eval (count-lines-and-chars))
+                     (default-value 'mode-line-format))))
 
 ;;; under Emacs26.1
 ;; (add-to-list 'mode-line-format
