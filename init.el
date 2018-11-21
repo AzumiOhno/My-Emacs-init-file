@@ -158,22 +158,6 @@
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 行と桁の表示
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(line-number-mode t)
-(column-number-mode t)
-;; 選択範囲の情報表示
-(defun count-lines-and-chars ()
-  (if mark-active
-      (format "[%3d:%4d]"
-              (count-lines (region-beginning) (region-end))
-              (- (region-end) (region-beginning)))
-    ""))
-(add-to-list 'mode-line-format
-             '(:eval (count-lines-and-chars)))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;日本語の印刷
 (setq ps-multibyte-buffer 'non-latin-printer)
 (require 'ps-mule)
@@ -365,6 +349,9 @@
 (use-package treemacs-projectile
   :after treemacs projectile)
 
+;;; quickrun
+(use-package quickrun)
+
 ;;; elpy (python-IDE)
 (use-package elpy
   :init (progn
@@ -524,3 +511,27 @@
 
 ;;; for fuzzy complete
 (use-package fuzzy)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 行と桁の表示
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(line-number-mode t)
+(column-number-mode t)
+;; 選択範囲の情報表示
+(defun count-lines-and-chars ()
+  (if mark-active
+      (format "[%3d:%4d]"
+              (count-lines (region-beginning) (region-end))
+              (- (region-end) (region-beginning)))
+    ""))
+
+;;; for Emacs26.1
+(setq-default mode-line-format
+              (cons '(:eval (count-lines-and-chars))
+                    (default-value 'mode-line-format)))
+
+;;; under Emacs26.1
+;; (add-to-list 'mode-line-format
+;;              '(:eval (count-lines-and-chars)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
