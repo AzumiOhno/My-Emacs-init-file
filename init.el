@@ -531,6 +531,21 @@
       ps-line-number-step  1
       )
 
+;;; migemo
+(use-package migemo
+  :config (progn
+          (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+          (setq migemo-command "cmigemo")
+          (setq migemo-options '("-q" "--emacs"))
+          (setq migemo-user-dictionary nil)
+          (setq migemo-coding-system 'utf-8)
+          (setq migemo-regex-dictionary nil)
+          (load-library "migemo")
+          (migemo-init)))
+
+;;; phi-search
+(use-package phi-search)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
