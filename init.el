@@ -20,15 +20,15 @@
 
 
 ;;; custom-theme
-(use-package doom-themes
-  :config (progn
-            (setq doom-themes-enable-bold t
-                  doom-themes-enable-italic t)
-            (load-theme 'doom-one t)
-            (doom-themes-visual-bell-config)
-            (doom-themes-treemacs-config)
-            (doom-themes-org-config)))
-
+;; (use-package doom-themes
+;;   :config (progn
+;;             (setq doom-themes-enable-bold t
+;;                   doom-themes-enable-italic t)
+;;             (load-theme 'doom-one t)
+;;             (doom-themes-visual-bell-config)
+;;             (doom-themes-treemacs-config)
+;;             (doom-themes-org-config)))
+(use-package dracula-theme)
 ;;
 ;; ssh
 ;;
@@ -63,7 +63,7 @@
         (t r)))
 
 (advice-add 'mozc-key-event-to-key-and-modifiers :filter-return 'advice:mozc-key-event-with-ctrl-key--with-ctrl)
-;; (advice-remove 'mozc-key-event-to-key-and-modifiers 'mozc-key-event-with-ctrl-key)
+
 
 ;;
 ;; windmove
@@ -103,31 +103,6 @@
            (setq reftex-defaultbibliography '("/home/azumi/lab/progress_report/reference.bib")))
          (when (eq system-type 'darwin)
            (setq reftex-defaultbibliography '("/Users/Azumi/Documents/Documents_macbook/university/lab/research/progress_report/reference.bib")))))
-;; 文章作成時の日本語文字コード
-;; 0: no-converion
-;; 1: Shift JIS (windows & dos default)
-;; 2: ISO-2022-JP (other default)
-;; 3: EUC
-;; 4: UTF-8
-;; (setq YaTeX-kanji-code 0)
-
-;; (setq tex-command "platex")
-
-;; (setq bibtex-command "pbibtex")
-;; (defvar YaTeX-dvi2-command-ext-alist
-;;   '(("[agx]dvi\\|dviout\\|emacsclient" . ".dvi")
-;;    ("ghostview\\|gv" . ".ps")
-;;    ("acroread\\|pdf\\|Preview\\|TeXShop\\|Skim\\|evince\\|apvlv" . ".pdf")))
-;; (setq dviprint-command-format "dvipdfmx -f ptex-ipaex.map %s")
-;; ;;reftex-mode
-;; (add-hook 'yatex-mode-hook
-;;           #'(lambda ()
-;;               (reftex-mode 1)
-;;               (define-key reftex-mode-map
-;;                 (concat YaTeX-prefix ">") 'YaTeX-comment-region)
-;;               (define-key reftex-mode-map
-;;                 (concat YaTeX-prefix "<") 'YaTeX-uncomment-region)))
-;; (setq reftex-default-bibliography '("/home/azumi/lab/progress_report/reference.bib"))
 
 ;; eww
 (setq eww-search-prefix "http://www.google.co.jp/search?q=")
@@ -163,27 +138,14 @@
 (require 'ps-mule)
 (defalias 'ps-mule-header-string-charsets 'ignore)
 
-
-;; (use-package pdf-preview)
-;; (setq pdf-preview-preview-command "evince")
 ;;multi-term
-(use-package multi-term)
+(use-package multi-term
+  :config
+  (progn
+    (setq multi-term-program "/bin/bash")
+   (setq system-uses-terminfo nil)))
 
-;; ;pdf-toolsに関する設定
-;; (use-package pdf-tools)
-;; (use-package pdf-annot) 
-;; (use-package pdf-history) 
-;; (use-package pdf-info) 
-;; (use-package pdf-isearch) 
-;; (use-package pdf-links) 
-;; (use-package pdf-misc) 
-;; (use-package pdf-occur) 
-;; (use-package pdf-outline) 
-;; (use-package pdf-sync) 
-;; (use-package tablist-filter)
-;; (use-package tablist)
-;; (add-to-list auto-mode-alist (cons "\\.pdf$" 'pdf-view-mode))
-
+;;linum
 (use-package linum)
 (global-linum-mode)
 (defcustom linum-disabled-modes-list '(doc-view-mode pdf-view-mode)
@@ -214,7 +176,6 @@
 ;; magit
 (use-package magit
   :bind ("C-x g" . magit-status))
-;; (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; markdown
 (use-package markdown-mode
@@ -536,3 +497,49 @@
 ;;              '(:eval (count-lines-and-chars)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(eval-when-compile (require 'ps-mule nil t))
+(setq ps-paper-type        'a4 ;paper size
+      ps-lpr-command       "lpr"
+      ps-lpr-switches      '("-o Duplex=DuplexNoTumble")
+      ps-printer-name      "HP-Officejet-Pro-8600"   ; your printer name
+      ps-multibyte-buffer  'non-latin-printer ;for printing Japanese
+      ps-n-up-printing     2 ;print n-page per 1 paper
+
+      ;; Margin
+      ps-left-margin       20
+      ps-right-margin      20
+      ps-top-margin        20
+      ps-bottom-margin     20
+      ps-n-up-margin       20
+
+      ;; Header/Footer setup
+      ps-print-header      t            ;buffer name, page number, etc.
+      ps-print-footer      nil          ;page number
+
+      ;; font
+      ps-font-size         '(9 . 10)
+      ps-header-font-size  '(10 . 12)
+      ps-header-title-font-size '(12 . 14)
+      ps-header-font-family 'Helvetica    ;default
+      ps-line-number-font  "Times-Italic" ;default
+      ps-line-number-font-size 6
+
+      ;; line-number
+      ps-line-number       t ; t:print line number
+      ps-line-number-start 1
+      ps-line-number-step  1
+      )
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(highlight-indentation-current-column-face ((t (:background "white smoke")))))
